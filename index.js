@@ -7,6 +7,7 @@
  * Released under the MIT License.
  */
 
+var Remarkable = require('remarkable');
 var utils = require('./lib/utils');
 var querystring = require('querystring');
 
@@ -26,7 +27,7 @@ module.exports = toc;
  */
 
 function toc(str, options) {
-  return new utils.Remarkable()
+  return new Remarkable()
     .use(generate(options))
     .render(str);
 }
