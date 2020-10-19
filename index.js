@@ -8,6 +8,16 @@
  */
 
 var Remarkable = require('remarkable');
+var concat = require('concat-stream');
+var matter = require('gray-matter');
+var li = require('list-item');
+var mdlink = require('markdown-link');
+var minimist = require('minimist');
+var merge = require('mixin-deep');
+var pick = require('object.pick');
+var repeat require('repeat-string');
+var strip = require('strip-color');
+
 var utils = require('./lib/utils');
 var querystring = require('querystring');
 
@@ -47,7 +57,7 @@ toc.insert = require('./lib/insert');
  */
 
 function generate(options) {
-  var opts = utils.merge({firsth1: true, maxdepth: 6}, options);
+  var opts = merge({firsth1: true, maxdepth: 6}, options);
   var stripFirst = opts.firsth1 === false;
   if (typeof opts.linkify === 'undefined') opts.linkify = true;
 
@@ -97,7 +107,7 @@ function generate(options) {
           }
 
           tok.seen = opts.num = seen[val];
-          tok.slug = utils.slugify(val, opts);
+          tok.slug = slugify(val, opts);
           res.json.push(utils.pick(tok, ['content', 'slug', 'lvl', 'i', 'seen']));
           if (opts.linkify) tok = linkify(tok, opts);
           result.push(tok);
@@ -125,11 +135,11 @@ function generate(options) {
  */
 
 function bullets(arr, options) {
-  var opts = utils.merge({indent: '  '}, options);
+  var opts = merge({indent: '  '}, options);
   opts.chars = opts.chars || opts.bullets || ['-', '*', '+'];
   var unindent = 0;
 
-  var listitem = utils.li(opts);
+  var listitem = li(opts);
   var fn = typeof opts.filter === 'function'
     ? opts.filter
     : null;
@@ -183,7 +193,7 @@ function highest(arr) {
  */
 
 function linkify(tok, options) {
-  var opts = utils.merge({}, options);
+  var opts = merge({}, options);
   if (tok && tok.content) {
     opts.num = tok.seen;
     var text = titleize(tok.content, opts);
@@ -250,7 +260,7 @@ function strip(str, opts) {
 toc.utils = utils;
 toc.bullets = bullets;
 toc.linkify = linkify;
-toc.slugify = utils.slugify;
+toc.slugify = slugify;
 toc.titleize = titleize;
 toc.plugin = generate;
 toc.strip = strip;
